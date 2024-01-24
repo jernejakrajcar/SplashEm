@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
+  <metadata>
+    <id>SplashEm</id>
+    <version>1.0.0</version>
+    <authors>SplashEm</authors>
+    <description>Package Description</description>
+    <dependencies>
+      <group targetFramework="net6.0-android31.0">
+        <dependency id="MonoGame.Content.Builder.Task" version="3.8.1.303" exclude="Build,Analyzers" />
+        <dependency id="MonoGame.Framework.Android" version="3.8.1.303" exclude="Build,Analyzers" />
+      </group>
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="C:\Users\jerne\Documents\faks\3.letnik\tehnlogija_iger\naloga\SplashEm\SplashEm\bin\Debug\net6.0-android\SplashEm.runtimeconfig.json" target="lib\net6.0-android31.0\SplashEm.runtimeconfig.json" />
+    <file src="C:\Users\jerne\Documents\faks\3.letnik\tehnlogija_iger\naloga\SplashEm\SplashEm\bin\Debug\net6.0-android\SplashEm.dll" target="lib\net6.0-android31.0\SplashEm.dll" />
+    <file src="C:\Users\jerne\Documents\faks\3.letnik\tehnlogija_iger\naloga\SplashEm\SplashEm\bin\Debug\net6.0-android\SplashEm.xml" target="lib\net6.0-android31.0\SplashEm.xml" />
+  </files>
+</package>

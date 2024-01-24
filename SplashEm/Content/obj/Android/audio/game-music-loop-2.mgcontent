@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PipelineBuildEvent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <SourceFile>C:/Users/jerne/Documents/faks/3.letnik/tehnlogija_iger/naloga/SplashEm/SplashEm/Content/audio/game-music-loop-2.mp3</SourceFile>
+  <SourceTime>2024-01-24T17:25:08.7329116+01:00</SourceTime>
+  <DestFile>C:/Users/jerne/Documents/faks/3.letnik/tehnlogija_iger/naloga/SplashEm/SplashEm/Content/bin/Android/audio/game-music-loop-2.xnb</DestFile>
+  <DestTime>2024-01-24T17:37:48.8070416+01:00</DestTime>
+  <Importer>Mp3Importer</Importer>
+  <ImporterTime>2022-07-26T13:44:56+02:00</ImporterTime>
+  <Processor>SongProcessor</Processor>
+  <ProcessorTime>2022-07-26T13:44:56+02:00</ProcessorTime>
+  <Parameters>
+    <Key>Quality</Key>
+    <Value>Best</Value>
+  </Parameters>
+  <Dependencies />
+  <BuildAsset />
+  <BuildOutput>
+    <string>C:/Users/jerne/Documents/faks/3.letnik/tehnlogija_iger/naloga/SplashEm/SplashEm/Content/bin/Android/audio/game-music-loop-2.m4a</string>
+  </BuildOutput>
+</PipelineBuildEvent>

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<SourceFileCollection xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Profile>Reach</Profile>
+  <Platform>Android</Platform>
+  <Config />
+  <SourceFiles>
+    <File>C:/Users/jerne/Documents/faks/3.letnik/tehnlogija_iger/naloga/SplashEm/SplashEm/Content/audio/coin-pickup.wav</File>
+    <File>C:/Users/jerne/Documents/faks/3.letnik/tehnlogija_iger/naloga/SplashEm/SplashEm/Content/audio/fail.wav</File>
+    <File>C:/Users/jerne/Documents/faks/3.letnik/tehnlogija_iger/naloga/SplashEm/SplashEm/Content/audio/game-music-loop-2.mp3</File>
+    <File>C:/Users/jerne/Documents/faks/3.letnik/tehnlogija_iger/naloga/SplashEm/SplashEm/Content/audio/splash.wav</File>
+    <File>C:/Users/jerne/Documents/faks/3.letnik/tehnlogija_iger/naloga/SplashEm/SplashEm/Content/img/home-screen.jpg</File>
+    <File>C:/Users/jerne/Documents/faks/3.letnik/tehnlogija_iger/naloga/SplashEm/SplashEm/Content/img/icon-mute.png</File>
+    <File>C:/Users/jerne/Documents/faks/3.letnik/tehnlogija_iger/naloga/SplashEm/SplashEm/Content/img/menu-pause.jpg</File>
+    <File>C:/Users/jerne/Documents/faks/3.letnik/tehnlogija_iger/naloga/SplashEm/SplashEm/Content/img/mute-icon.png</File>
+    <File>C:/Users/jerne/Documents/faks/3.letnik/tehnlogija_iger/naloga/SplashEm/SplashEm/Content/img/slikovni-atlas-elementi.png</File>
+    <File>C:/Users/jerne/Documents/faks/3.letnik/tehnlogija_iger/naloga/SplashEm/SplashEm/Content/img/slikovni-atlas-elementi2.png</File>
+    <File>C:/Users/jerne/Documents/faks/3.letnik/tehnlogija_iger/naloga/SplashEm/SplashEm/Content/img/slikovni-atlas-nov.png</File>
+    <File>C:/Users/jerne/Documents/faks/3.letnik/tehnlogija_iger/naloga/SplashEm/SplashEm/Content/img/splash-ani.png</File>
+    <File>C:/Users/jerne/Documents/faks/3.letnik/tehnlogija_iger/naloga/SplashEm/SplashEm/Content/img/Splash-em-background.png</File>
+    <File>C:/Users/jerne/Documents/faks/3.letnik/tehnlogija_iger/naloga/SplashEm/SplashEm/Content/img/Splash-em-background2.png</File>
+  </SourceFiles>
+  <DestFiles>
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+  </DestFiles>
+</SourceFileCollection>
