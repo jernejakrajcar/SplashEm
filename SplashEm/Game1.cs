@@ -58,7 +58,8 @@ namespace SplashEm
         {
             Playing,
             Paused,
-            Menu
+            Menu,
+            Settings
         }
 
         private GameState gameState = GameState.Playing;
@@ -79,17 +80,14 @@ namespace SplashEm
 
         Texture2D home;
 
+        Texture2D settings;
+
         Texture2D mute;
 
         Texture2D foreground;
 
         Texture2D splash_animation;
 
-        string atlas = "img/slikovni-atlas-nov";
-        Texture2D heart;
-        Rectangle heartR;
-
-        Texture2D score;
         Rectangle scoreR;
 
         Rectangle trophyR;
@@ -184,7 +182,10 @@ namespace SplashEm
 
             //nalaganje pesmi
             music = Content.Load<Song>("audio/game-music-loop-2");
-            MediaPlayer.Play(music);
+            if (isMusicOn)
+            {
+                MediaPlayer.Play(music);
+            }
             MediaPlayer.IsRepeating = true;
 
             menu = Content.Load<Texture2D>("img/menu-pause");
@@ -215,7 +216,9 @@ namespace SplashEm
             {
                 // Uporaba SharedPreferences za preverjanje nastavitev zvoka
                 var sharedPreferences = Android.App.Application.Context.GetSharedPreferences("SoundSettings", FileCreationMode.Private);
+                var sharedPreferences2 = Android.App.Application.Context.GetSharedPreferences("MusicSettings", FileCreationMode.Private);
                 isSoundOn = sharedPreferences.GetBoolean("SoundOn", true);
+                isMusicOn = sharedPreferences2.GetBoolean("MusicOn", true);
             }
             catch (Exception ex)
             {
@@ -230,9 +233,13 @@ namespace SplashEm
             {
                 // Uporaba SharedPreferences za shranjevanje nastavitev zvoka
                 var sharedPreferences = Android.App.Application.Context.GetSharedPreferences("SoundSettings", FileCreationMode.Private);
+                var sharedPreferences2 = Android.App.Application.Context.GetSharedPreferences("MusicSettings", FileCreationMode.Private);
                 var editor = sharedPreferences.Edit();
                 editor.PutBoolean("SoundOn", isSoundOn);
                 editor.Apply();
+                var editor2 = sharedPreferences2.Edit();
+                editor2.PutBoolean("MusicOn", isMusicOn);
+                editor2.Apply();
             }
             catch (Exception ex)
             {
@@ -385,15 +392,14 @@ namespace SplashEm
                     {
                         // Uporabnik je kliknil ikono zvoka, preklopi stanje zvoka
                         isSoundOn = !isSoundOn;
+                        isMusicOn = !isMusicOn;
                         if (isMusicOn)
                         {
                             MediaPlayer.Stop();
-                            isMusicOn = false;
                         }
                         else
                         {
                             MediaPlayer.Play(music);
-                            isMusicOn = true;
                         }
                         SaveSoundSettings(); // Shranite nastavitve zvoka
                     }
