@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PipelineBuildEvent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <SourceFile>C:/Users/jerne/Documents/faks/3.letnik/tehnlogija_iger/naloga/SplashEm/SplashEm/Content/img/home-screen.jpg</SourceFile>
-  <SourceTime>2024-01-09T19:40:35.5577753+01:00</SourceTime>
+  <SourceFile>C:/Users/jerne/Documents/faks/3.letnik/tehnlogija_iger/naloga/SplashEm/SplashEm/Content/img/home-screen.png</SourceFile>
+  <SourceTime>2024-01-25T23:48:43.4150011+01:00</SourceTime>
   <DestFile>C:/Users/jerne/Documents/faks/3.letnik/tehnlogija_iger/naloga/SplashEm/SplashEm/Content/bin/Android/Content/img/home-screen.xnb</DestFile>
-  <DestTime>2024-01-09T20:02:37.3524531+01:00</DestTime>
+  <DestTime>2024-01-26T00:06:33.5771403+01:00</DestTime>
   <Importer>TextureImporter</Importer>
   <ImporterTime>2022-07-26T13:44:56+02:00</ImporterTime>
   <Processor>TextureProcessor</Processor>

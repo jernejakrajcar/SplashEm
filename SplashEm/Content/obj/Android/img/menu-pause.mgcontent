@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PipelineBuildEvent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <SourceFile>C:/Users/jerne/Documents/faks/3.letnik/tehnlogija_iger/naloga/SplashEm/SplashEm/Content/img/menu-pause.jpg</SourceFile>
-  <SourceTime>2024-01-02T16:34:23.3261818+01:00</SourceTime>
+  <SourceFile>C:/Users/jerne/Documents/faks/3.letnik/tehnlogija_iger/naloga/SplashEm/SplashEm/Content/img/menu-pause.png</SourceFile>
+  <SourceTime>2024-01-24T21:46:15.62868+01:00</SourceTime>
   <DestFile>C:/Users/jerne/Documents/faks/3.letnik/tehnlogija_iger/naloga/SplashEm/SplashEm/Content/bin/Android/img/menu-pause.xnb</DestFile>
-  <DestTime>2024-01-02T16:35:22.6081211+01:00</DestTime>
+  <DestTime>2024-01-25T21:38:59.8594646+01:00</DestTime>
   <Importer>TextureImporter</Importer>
   <ImporterTime>2022-07-26T13:44:56+02:00</ImporterTime>
   <Processor>TextureProcessor</Processor>

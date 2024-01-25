@@ -23,7 +23,7 @@ public class TextureManager
 
     public void LoadTextures(ContentManager content)
     {
-        ForegroundTexture = content.Load<Texture2D>("img/slikovni-atlas-nov");
+        ForegroundTexture = content.Load<Texture2D>("img/slikovni-atlas-new");
         // Dodajte druge teksture, ki jih potrebujete, glede na vaše zahteve
     }
 }

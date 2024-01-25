@@ -22,7 +22,7 @@ public class PoliceTarget : Sprite
     { 
         this.position = position;
         this.velocity = velocity;
-        this.size = new Vector2(180, 350);
+            this.size = new Vector2(180, 350);
         this.isMovingLeft = isMovingLeft;
         isStopped = false;
         stopTimer = 0.0f;

@@ -14,6 +14,7 @@ using Android.Content;
 using System.Xml.Serialization;
 using static Android.Icu.Text.Transliterator;
 using Microsoft.Xna.Framework.Media;
+using Javax.Security.Auth;
 
 namespace SplashEm
 {
@@ -49,9 +50,12 @@ namespace SplashEm
         private Song music;
 
         private Rectangle homeButtonRect; // Pravokotnik za gumb home
-        private Rectangle soundIconRect;  // Pravokotnik za ikono zvoka
+        private Rectangle settingsIconRect;  // Pravokotnik za ikono zvoka
         private Rectangle playButtonRect;
-
+        private Rectangle soundIconRect = new Rectangle(230, 825, 200, 200);
+        private Rectangle musicIconRect = new Rectangle(636, 825, 200, 200);
+        private Rectangle backButtonRect = new Rectangle(428, 1340, 200, 180);
+        private Rectangle gameDiffRect = new Rectangle(330, 1400, 420, 120);
 
 
         enum GameState
@@ -62,7 +66,16 @@ namespace SplashEm
             Settings
         }
 
-        private GameState gameState = GameState.Playing;
+        enum Difficulty
+        {
+            Easy,
+            Medium,
+            Hard
+        }
+
+        private GameState gameState = GameState.Menu;
+
+        private Difficulty currentDifficulty = Difficulty.Easy;
 
         public Game1()
         {
@@ -71,6 +84,7 @@ namespace SplashEm
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
             LoadSoundSettings();
+            livesManager = new LivesManager(3);
         }
 
         Texture2D background;
@@ -81,8 +95,6 @@ namespace SplashEm
         Texture2D home;
 
         Texture2D settings;
-
-        Texture2D mute;
 
         Texture2D foreground;
 
@@ -109,7 +121,7 @@ namespace SplashEm
             backgroundR.Height = 2280;
 
             homeButtonRect = new Rectangle(300, 1100, 420, 190); // Pravokotnik za gumb home
-            soundIconRect = new Rectangle(GraphicsDevice.Viewport.Width - 272, 39, 260, 260); // Pravokotnik za ikono zvoka
+            settingsIconRect = new Rectangle(20, 39, 260, 260); // Pravokotnik za ikono zvoka
             playButtonRect = new Rectangle(300, 1000, 420, 190);
 
             int initialLives = 3; // Število življenj na začetku
@@ -131,8 +143,6 @@ namespace SplashEm
 
             scoreManager = new ScoreManager();
             scoreManager.OnScoreUpdated += HandleScoreTexture;
-
-            livesManager = new LivesManager(3); //število življenj na začetku
 
 
             pauseR.X = 5;
@@ -167,8 +177,11 @@ namespace SplashEm
             //nalaganje grafik
             background = Content.Load<Texture2D>("img/Splash-em-background");
             splash_animation = Content.Load<Texture2D>("img/splash-ani");
-            mute = Content.Load<Texture2D>("img/mute-icon");
+
             home = Content.Load<Texture2D>("img/home-screen");
+            menu = Content.Load<Texture2D>("img/menu-pause");
+            settings = Content.Load<Texture2D>("img/settings-menu");
+
 
             //nalaganje zvočnih efektov
             splashSoundEffect = Content.Load<SoundEffect>("audio/splash"); 
@@ -188,7 +201,6 @@ namespace SplashEm
             }
             MediaPlayer.IsRepeating = true;
 
-            menu = Content.Load<Texture2D>("img/menu-pause");
 
             Vector2 targetPosition = new Vector2(250, 1570); // Set your initial position
             Vector2 targetVelocity = new Vector2(200, 0);   // Set your initial velocity
@@ -199,14 +211,7 @@ namespace SplashEm
             // Add the target to the manager
             TargetManager.AddTarget(target);
 
-            Vector2 policePosition = new Vector2(-300, 1000); // Set your initial position
-            Vector2 policeVelocity = new Vector2(100, 0);   // Set your initial velocity
 
-            // Create a new target
-            PoliceTarget policeTarget = new PoliceTarget(foreground, policePosition, policeVelocity, true);
-
-            // Add the target to the manager
-            PoliceTargetManager.AddPoliceTarget(policeTarget);
         }
 
         // Ob zagonu aplikacije ali obnovitvi nastavitev
@@ -247,6 +252,47 @@ namespace SplashEm
             }
         }
 
+        private void GeneratePoliceTarget()
+        {
+            Vector2 policePosition = new Vector2(-300, 1000); // Set your initial position
+            Vector2 policeVelocity = new Vector2(100, 0);   // Set your initial velocity
+            Texture2D policeTargetTexture = Content.Load<Texture2D>("img/slikovni-atlas-new");
+
+
+            // Create a new target
+            PoliceTarget policeTarget = new PoliceTarget(policeTargetTexture, policePosition, policeVelocity, true);
+
+            PoliceTargetManager.AddPoliceTarget(policeTarget);
+            Console.WriteLine(PoliceTargetManager.PoliceTargets.Count);
+
+        }
+
+        private void SetupGameForDifficulty(Difficulty difficulty)
+        {
+            switch (difficulty)
+            {
+                case Difficulty.Easy:
+                    // Nastavitev za easy težavnost
+                    break;
+
+                case Difficulty.Medium:
+                    // Nastavitev za medium težavnost
+                    livesManager = new LivesManager(3);
+                    // Dodajte policiste
+                    GeneratePoliceTarget();
+                    break;
+
+                case Difficulty.Hard:
+                    // Nastavitev za hard težavnost
+                    livesManager = new LivesManager(3);
+                    //dodaj tarče pametnega agenta!
+
+                    // Dodajte policiste
+                    GeneratePoliceTarget();
+                    break;
+            }
+        }
+
 
         protected override void UnloadContent()
         {
@@ -265,6 +311,9 @@ namespace SplashEm
                     break;
                 case GameState.Menu:
                     UpdateMenu();
+                    break;
+                case GameState.Settings:
+                    UpdateSettings();
                     break;
             }
 
@@ -332,20 +381,46 @@ namespace SplashEm
                         }
                     }
 
-                    foreach (var policeTarget in PoliceTargetManager.PoliceTargets.ToList())
+                    switch (currentDifficulty)
                     {
-                        if (policeTarget.IsCollision(splash))
-                        {
-                            HandlePoliceHit(); // Dodajte kodo za obdelavo trčenja s policistom
-                            SplashManager.Splashes.Remove(splash); // Odstranite splash
-                        }
-                        break;
+                        case Difficulty.Medium:
+                            //handle police targets
+                            foreach (var policeTarget in PoliceTargetManager.PoliceTargets.ToList())
+                            {
+                                if (policeTarget.IsCollision(splash))
+                                {
+                                    HandlePoliceHit(); // Dodajte kodo za obdelavo trčenja s policistom
+                                    SplashManager.Splashes.Remove(splash); // Odstranite splash
+                                }
+                                break;
+                            }
+                            Console.WriteLine(PoliceTargetManager.PoliceTargets.Count);
+                            Console.WriteLine("GLEDAM COLLISION S POLICISTOM!!!");
+                            
+                            break;
+                        case Difficulty.Hard:
+                            //handle police targets
+                            foreach (var policeTarget in PoliceTargetManager.PoliceTargets.ToList())
+                            {
+                                if (policeTarget.IsCollision(splash))
+                                {
+                                    HandlePoliceHit(); // Dodajte kodo za obdelavo trčenja s policistom
+                                    SplashManager.Splashes.Remove(splash); // Odstranite splash
+                                }
+                                break;
+                            }
+                            
+                            //handle special targets
+                            break;
+                        default:
+                            break;
                     }
+
+                    
                 }
 
-                PoliceTargetManager.Update(gameTime);
-
                 SplashManager.Update(gameTime);
+                PoliceTargetManager.Update(gameTime);
             }
             if (isPaused)
             {
@@ -369,6 +444,7 @@ namespace SplashEm
                     {
                         // Uporabnik je kliknil gumb home, preklopi v meni
                         gameState = GameState.Menu;
+                        ResetGame();
                     }
                     else
                     {
@@ -378,10 +454,67 @@ namespace SplashEm
             }
         }
 
-        private void UpdateMenu()
+        private void ResetGame()
         {
-            // Logika za meni
-            // ...
+            // Ponastavite vse potrebne spremenljivke in stanja na začetne vrednosti
+            isGameOver = false;
+            isPaused = false;
+            scoreManager.ResetScore();
+            livesManager.ResetLives();
+
+            // Če želite, lahko tudi počistite seznam splash-ov, ciljev itd.
+            SplashManager.Splashes.Clear();
+            PoliceTargetManager.PoliceTargets.Clear();
+        }
+
+        private void UpdateMenu()
+        { 
+
+            TouchCollection tc = TouchPanel.GetState();
+            foreach (TouchLocation tl in tc)
+            {
+                if (TouchLocationState.Pressed == tl.State)
+                {
+                    if (settingsIconRect.Contains(tl.Position))
+                    {
+                        //Uporabnik je kliknil ikono za nastavitve
+                        gameState = GameState.Settings;
+                    }
+
+                    if (playButtonRect.Contains(tl.Position))
+                    {
+                        //Uporabnik je kliknil play
+                        gameState = GameState.Playing;
+                    }
+
+                    if (gameDiffRect.Contains(tl.Position))
+                    {
+                        //Uporabnik hoče spremenit težavnost
+                        switch (currentDifficulty)
+                        {
+                            case Difficulty.Easy:
+                                currentDifficulty = Difficulty.Medium;
+                                SetupGameForDifficulty(currentDifficulty);
+                                break;
+                            case Difficulty.Medium:
+                                currentDifficulty = Difficulty.Hard;
+                                SetupGameForDifficulty(currentDifficulty);
+                                break;
+                            case Difficulty.Hard:
+                                currentDifficulty = Difficulty.Easy;
+                                SetupGameForDifficulty(currentDifficulty);
+                                break;
+                        }
+
+                    }
+                    
+                }
+            }
+        }
+
+        private void UpdateSettings()
+        {
+            // Logika za nastavitve
 
             TouchCollection tc = TouchPanel.GetState();
             foreach (TouchLocation tl in tc)
@@ -392,26 +525,33 @@ namespace SplashEm
                     {
                         // Uporabnik je kliknil ikono zvoka, preklopi stanje zvoka
                         isSoundOn = !isSoundOn;
-                        isMusicOn = !isMusicOn;
+                        SaveSoundSettings(); // Shranite nastavitve zvoka
+                    }
+
+                    if (musicIconRect.Contains(tl.Position))
+                    {
                         if (isMusicOn)
                         {
                             MediaPlayer.Stop();
+                            isMusicOn = false;
                         }
                         else
                         {
                             MediaPlayer.Play(music);
+                            isMusicOn = true;
                         }
-                        SaveSoundSettings(); // Shranite nastavitve zvoka
+                        SaveSoundSettings();
                     }
 
-                    if (playButtonRect.Contains(tl.Position))
+                    if (backButtonRect.Contains(tl.Position))
                     {
                         //Uporabnik je kliknil play
-                        gameState = GameState.Playing;
+                        gameState = GameState.Menu;
                     }
                 }
             }
         }
+
 
         // Helper method to check for collision between splash and target
         private bool IsCollision(Splash splash, Target target)
@@ -547,7 +687,11 @@ namespace SplashEm
 
                     SplashManager.Draw(_spriteBatch);
 
-                    PoliceTargetManager.Draw(_spriteBatch);
+                    if(currentDifficulty == Difficulty.Medium || currentDifficulty == Difficulty.Hard)
+                    {
+                        PoliceTargetManager.Draw(_spriteBatch);
+                    }
+                    
 
                     /* tukaj je koda za preverjanje detekcije trkov med objekti:
                     // Risanje AABB okoli Splash objektov
@@ -580,11 +724,48 @@ namespace SplashEm
                     // Risanje menija
                     Rectangle sourceHome = new Rectangle(0, 0, 1080, 1920);
                     _spriteBatch.Draw(home, new Rectangle(0, 0, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height), sourceHome, Color.White);
+                    switch (currentDifficulty)
+                    {
+                        case Difficulty.Easy:
+                            Rectangle sourceEasy = new Rectangle(0, 800, 400, 100);
+                            _spriteBatch.Draw(foreground, gameDiffRect, sourceEasy, Color.White);
+                            break;
+                        case Difficulty.Medium:
+                            Rectangle sourceMedium = new Rectangle(0, 700, 400, 100);
+                            _spriteBatch.Draw(foreground, gameDiffRect, sourceMedium, Color.White);
+                            break;
+                        case Difficulty.Hard:
+                            Rectangle sourceHard = new Rectangle(0, 900, 400, 100);
+                            _spriteBatch.Draw(foreground, gameDiffRect, sourceHard, Color.White);
+                            break;
+                    }
+                    break;
+                case GameState.Settings:
+                    Rectangle sourceSettings = new Rectangle(0, 0, 1080, 1920);
+                    _spriteBatch.Draw(settings, new Rectangle(0, 0, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height), sourceSettings, Color.White);
+
+                    //_spriteBatch.Draw(menu, backButtonRect, new Rectangle(0, 0, 1080, 1920), Color.Blue * 0.5f);
+
                     if (!isSoundOn)
                     {
-                        _spriteBatch.Draw(mute, soundIconRect, Color.White);
+                        Rectangle sourceMute = new Rectangle(100, 600, 100, 100);
+                        _spriteBatch.Draw(foreground, soundIconRect, sourceMute, Color.White);
                     }
-
+                    else if (isSoundOn)
+                    {
+                        Rectangle sourceUnmute = new Rectangle(0, 600, 100, 100);
+                        _spriteBatch.Draw(foreground, soundIconRect, sourceUnmute, Color.White);
+                    }
+                    if (!isMusicOn)
+                    {
+                        Rectangle sourceMute = new Rectangle(300, 600, 100, 100);
+                        _spriteBatch.Draw(foreground, musicIconRect, sourceMute, Color.White);
+                    }
+                    else if (isMusicOn)
+                    {
+                        Rectangle sourceUnmute = new Rectangle(200, 600, 100, 100);
+                        _spriteBatch.Draw(foreground, musicIconRect, sourceUnmute, Color.White);
+                    }
                     break;
             }
 
