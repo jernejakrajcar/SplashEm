@@ -15,6 +15,7 @@ using System.Xml.Serialization;
 using static Android.Icu.Text.Transliterator;
 using Microsoft.Xna.Framework.Media;
 using Javax.Security.Auth;
+using Random = System.Random;
 
 namespace SplashEm
 {
@@ -267,17 +268,30 @@ namespace SplashEm
 
         }
 
+        private void GenerateAngryTargets()
+        {
+            Vector2 angryPosition = new Vector2(-200, 600);
+            Vector2 angryVelocity = new Vector2(200, 0);
+            Texture2D angryTexture = Content.Load<Texture2D>("img/slikovni-atlas-new");
+
+            AngryTarget angryTarget = new AngryTarget(angryTexture, angryPosition, angryVelocity, true);
+
+            AngryTargetManager.AddAngryTarget(angryTarget);
+        }
+
         private void SetupGameForDifficulty(Difficulty difficulty)
         {
             switch (difficulty)
             {
                 case Difficulty.Easy:
                     // Nastavitev za easy težavnost
+                    TargetManager.GenerateNewTargets();
                     break;
 
                 case Difficulty.Medium:
                     // Nastavitev za medium težavnost
                     livesManager = new LivesManager(3);
+                    TargetManager.GenerateNewTargets();
                     // Dodajte policiste
                     GeneratePoliceTarget();
                     break;
@@ -285,8 +299,9 @@ namespace SplashEm
                 case Difficulty.Hard:
                     // Nastavitev za hard težavnost
                     livesManager = new LivesManager(3);
+                    TargetManager.GenerateNewTargets();
                     //dodaj tarče pametnega agenta!
-
+                    GenerateAngryTargets();
                     // Dodajte policiste
                     GeneratePoliceTarget();
                     break;
@@ -348,6 +363,18 @@ namespace SplashEm
                             }
                             //add the new splash object to the list
                             SplashManager.AddSplash(sp);
+                            if(currentDifficulty== Difficulty.Hard)
+                            {
+                                foreach (var angryTarget in AngryTargetManager.AngryTargets)
+                                {
+                                    if (angryTarget != null && angryTarget.currentState == AngryTarget.AngryTargetState.LookingUp)
+                                    {
+                                        HandleHit(); // Dodajte kodo za obdelavo trčenja s policistom
+                                        SplashManager.Splashes.Remove(sp); // Odstranite splash
+                                    }
+                                }
+                                    
+                            }
                         }
                         else
                         {
@@ -373,6 +400,21 @@ namespace SplashEm
                             SplashManager.Splashes.Remove(splash);
                             TargetManager.Targets.Remove(target);
                             scoreManager.UpdateScore(1); // Dodajte toliko točk, kolikor želite ob vsakem zadetku tarče
+                            if(currentDifficulty == Difficulty.Hard)
+                            {
+                                // Dodajte random generator
+                                Random random = new Random();
+
+                                // Približno 30% časa bo prišlo do spremembe stanja
+                                if (random.NextDouble() < 0.3)
+                                {
+                                    foreach (var angryTarget in AngryTargetManager.AngryTargets)
+                                    {
+                                        // Spremeni stanje za vse AngryTarget objekte
+                                        angryTarget.SwitchToLookingUpState();
+                                    }
+                                }
+                            }
                             if (isSoundOn)
                             {
                                 gainPointsSoundInstance.Play();
@@ -409,8 +451,22 @@ namespace SplashEm
                                 }
                                 break;
                             }
-                            
+
                             //handle special targets
+                                foreach (var angryTarget in AngryTargetManager.AngryTargets.ToList())
+                                {
+                                    if (angryTarget.IsCollision(splash))
+                                    {
+                                        if (angryTarget != null && angryTarget.currentState == AngryTarget.AngryTargetState.Moving)
+                                        {
+                                            scoreManager.UpdateScore(1); // Dodajte kodo za obdelavo trčenja s policistom
+                                            AngryTargetManager.AngryTargets.Remove(angryTarget);
+                                            SplashManager.Splashes.Remove(splash); // Odstranite splash
+                                            AngryTargetManager.HandleHit();
+                                        }
+                                    }
+                                break;
+                                }
                             break;
                         default:
                             break;
@@ -421,6 +477,7 @@ namespace SplashEm
 
                 SplashManager.Update(gameTime);
                 PoliceTargetManager.Update(gameTime);
+                AngryTargetManager.Update(gameTime);
             }
             if (isPaused)
             {
@@ -465,6 +522,8 @@ namespace SplashEm
             // Če želite, lahko tudi počistite seznam splash-ov, ciljev itd.
             SplashManager.Splashes.Clear();
             PoliceTargetManager.PoliceTargets.Clear();
+            AngryTargetManager.AngryTargets.Clear();
+            TargetManager.ResetGame();
         }
 
         private void UpdateMenu()
@@ -493,14 +552,17 @@ namespace SplashEm
                         switch (currentDifficulty)
                         {
                             case Difficulty.Easy:
+                                ResetGame();
                                 currentDifficulty = Difficulty.Medium;
                                 SetupGameForDifficulty(currentDifficulty);
                                 break;
                             case Difficulty.Medium:
+                                ResetGame();
                                 currentDifficulty = Difficulty.Hard;
                                 SetupGameForDifficulty(currentDifficulty);
                                 break;
                             case Difficulty.Hard:
+                                ResetGame();
                                 currentDifficulty = Difficulty.Easy;
                                 SetupGameForDifficulty(currentDifficulty);
                                 break;
@@ -589,7 +651,32 @@ namespace SplashEm
             }
         }
 
+        private void HandleHit()
+        {
 
+            livesManager.DecreaseLives();
+
+            if (livesManager.Lives <= 0)
+            {
+                //konec igre, zgubil si!!!
+                Console.WriteLine("Zgubil si!!!");
+                heartsRectangles.RemoveAt(heartsRectangles.Count - 1);
+                if (isSoundOn)
+                {
+                    loseLifeSoundInstance.Play();
+                }
+                isGameOver = true;
+            }
+            else
+            {
+                // Če še niste izgubili vseh življenj, odstranite en srček
+                heartsRectangles.RemoveAt(heartsRectangles.Count - 1);
+                if (isSoundOn)
+                {
+                    loseLifeSoundInstance.Play();
+                }
+            }
+        }
 
         private bool IsTouchOnPauseButton(Vector2 touchPosition)
         {
@@ -692,6 +779,10 @@ namespace SplashEm
                         PoliceTargetManager.Draw(_spriteBatch);
                     }
                     
+                    if(currentDifficulty == Difficulty.Hard)
+                    {
+                        AngryTargetManager.Draw(_spriteBatch);
+                    }
 
                     /* tukaj je koda za preverjanje detekcije trkov med objekti:
                     // Risanje AABB okoli Splash objektov

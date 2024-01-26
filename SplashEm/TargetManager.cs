@@ -66,7 +66,7 @@ namespace SplashEm
             return new Vector2(x, y);
         }
 
-        private static void GenerateNewTargets()
+        public static void GenerateNewTargets()
         {
             Vector2 targetPosition = GenerateRandomTargetPosition();
             Vector2 targetVelocity = new Vector2(200, 0);
